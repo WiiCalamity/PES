@@ -9,24 +9,13 @@ durante 24 meses. Considere que a taxa de juros de uma poupança é 0,5% ao mês
 a poupança não possui nenhum saldo inicial.
 https://www.idinheiro.com.br/calculadoras/calculadora-juros-compostos/
 """
-# Professor Waltrik eu não consegui fazer esse.
-# Tentei de tudo, menos o cálculo correto.
-# Em minha defesa, estamos na aula de programação e não finança.
 
-investimento=float(100)
-#investimento=float(input("Valor a investir a cada mês: "))
+investimento=float(input("Valor a investir a cada mês: "))
 saldo=float(0)
-periodo=int(2)
-juros=float(1.01)
-rendimento=float(0)
-print("RENDIMENTO", rendimento)
+periodo=int(24)
+juros=float(0.005)
 
 for i in range(periodo):
-    saldo=(saldo+investimento)*(juros)
-    if i==0:
-        rendimento=float(0)
-    print("i:",i)
-    print("rendimento:",rendimento)
-    print("Saldo acumulado:",saldo)
+    saldo=saldo+(saldo*juros)+investimento
 
-print("Total:",saldo)
+print("Saldo final: R$ %.2f" % saldo)

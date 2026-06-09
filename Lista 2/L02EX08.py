@@ -16,4 +16,4 @@ meses=int(input("Meses: "))
 
 for i in range(meses):
     divida=float(divida*juros)
-print("Dívida:",divida)
+print("Dívida: R$ %.2f" % divida)
