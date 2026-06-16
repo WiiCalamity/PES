@@ -1,0 +1,46 @@
+Curso Técnico Integrado em Informática
+Unidade Curricular: Programação e Engenharia de Software
+Professor: Thiago Waltrik
+Lista de Exercícios 01
+
+1 – Solicite o valor total de uma compra. Se o valor for maior ou igual a 100, exiba "Você
+ganhou um cupom de desconto!". Caso contrário, exiba "Continue comprando para
+ganhar um cupom de desconto!".
+
+2 - Peça a idade de uma pessoa. Usando estruturas de decisão, exiba uma mensagem
+com a classificação indicativa permitida para essa pessoa:
+• Menor que 10 anos: "Você pode assistir apenas a filmes com classificação Livre."
+• Entre 10 e 11 anos: "Você pode assistir a filmes com classificação até 10 anos."
+• Entre 12 e 13 anos: "Você pode assistir a filmes com classificação até 12 anos."
+• Entre 14 e 15 anos: "Você pode assistir a filmes com classificação até 14 anos."
+• Entre 16 e 17 anos: "Você pode assistir a filmes com classificação até 16 anos."
+• 18 anos ou mais: "Você pode assistir a filmes com classificação até 18 anos."
+
+3 – Construa um algoritmo que solicite o nome de usuário e a senha. Se o nome de
+usuário for igual a "admin" e a senha for igual a "12345", exiba "Login bem-sucedido".
+Caso contrário, exiba "Nome de usuário ou senha incorretos".
+
+4 – Solicite ao usuário um superpoder entre três opções: “força”, “velocidade” ou “voo”.
+Use estruturas de decisão para exibir uma frase que diga qual super-herói você seria com
+base na escolha:
+• Se escolher “força”: exiba “Você seria o Hulk!”;
+• Se escolher “velocidade”: exiba “Você seria o Flash!”;
+• Se escolher “voo”: exiba “Você seria o Superman!”.
+
+5 - Determinador de Temperatura: Solicite a temperatura do dia (em ºC). Dependendo da
+temperatura informada, exiba a mensagem apropriada conforme abaixo:
+• Menos de 10 ºC: “Está muito frio! Use roupas quentes.”;
+• De 10 ºC até 20 ºC (inclusive): “Frio. Vista-se bem!”;
+• Acima de 20 ºC até 25 ºC (inclusive): “Temperatura agradável.”;
+• Acima de 25 ºC até 30 ºC (inclusive): “Está ficando quente!”;
+• Acima de 30 ºC: “Está muito quente! Fique hidratado.”.
+Obs.: o algoritmo deve aceitar temperaturas com valores decimais (ex.: 20,5 ºC, 25,8 ºC
+etc.).
+
+6 - Jogo do Pedra, Papel, Tesoura. Solicite as escolhas do jogador 1 e do jogador 2
+(“pedra”, “papel” ou “tesoura”). Use condicionais para determinar quem ganhou:
+• Pedra ganha de tesoura, tesoura ganha de papel, papel ganha de pedra.
+• Exiba uma mensagem como “Jogador 1 venceu!” ou “Empate!”.
+
+7 - Qual é o seu Signo? Solicite o dia e o mês de nascimento do usuário. Com base
+nesses valores, use condicionais para determinar o signo.

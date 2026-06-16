@@ -6,6 +6,7 @@ Caso contrário, exiba "Nome de usuário ou senha incorretos".
 
 usuario = str(input("usuário: "))
 senha = str(input("senha: "))
+loginSucedido = int(0)
 
 while loginSucedido == 0:
     if usuario == "admin" and senha == "12345":
