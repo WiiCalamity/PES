@@ -22,18 +22,17 @@ notas=[]
 tamanho=int(input("Quantas notas devem ser digitadas? "))
 for i in range(tamanho):
     print("Nota",i+1,":", end=" ")
-    notas.append(input())
+    notas.append(float(input()))
 
 cls()
 print("Notas informadas (for):")
-for i in range(tamanho):
-    print("Nota:",notas[i])
+for i in notas:
+    print("Nota:",i)
 
 print(" ")
+
 print("Notas informadas (while):")
 i=int(0)
 while i < tamanho:
     print("Nota:",notas[i])
     i+=1
-
-# Fácil fácil
