@@ -22,7 +22,7 @@ simples=["","um","dois","três","quatro","cinco","seis","sete","oito","nove",
          "dez","onze","doze","treze","quatorze","quinze","dezesseis",
          "dezessete","dezoito","dezenove"]
 
-def atribuirPalavra(n):
+def atribuirPalavra(n): # Dois mil e vinte e seis :(
         if n==0:
                 return ""
         elif n<20:
@@ -53,5 +53,5 @@ def extenderNumero(num):
 
 valor=float(input("Valor (float): "))
 reais=int(valor//1)
-centavos=int(valor%1*100)
-print(f"{extenderNumero(reais)}reais e {extenderNumero(centavos)}centavos")
+centavos=int(round(valor%1*100))
+print(f"{extenderNumero(reais)}real(s) e {extenderNumero(centavos)}centavo(s)")
