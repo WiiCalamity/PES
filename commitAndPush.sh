@@ -13,8 +13,7 @@ read -p "Confirm? (y/N): " confirm
 
 git add .
 echo git added
-git commit
-#git commit --message=${message}
+git commit --message="${message}"
 echo git commited
 git push
 echo git pushed!!
