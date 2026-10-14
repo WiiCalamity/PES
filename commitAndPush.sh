@@ -3,7 +3,6 @@ oldName=`git config --global user.name`
 oldEmail=`git config --global user.email`
 myName="wiicalamity"
 myEmail="wiicalamity@proton.me"
-printf "${oldName}\n${oldEmail}" > oldUser.txt
 
 git config --global user.name "${myName}"
 git config --global user.email "${myEmail}"

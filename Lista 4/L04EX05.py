@@ -21,36 +21,36 @@ amigos=[]
 
 def cadastrar():
     opcao=input("Cadastrar novo amigo próximo: ")
-    if not opcao in amigos:
-        amigos.append(opcao)
-        print("Sucesso!")
-    else:
+    if opcao in amigos:
         print("Esse amigo já existe! Use outro nome!")
+        return
+    amigos.append(opcao)
+    print("Sucesso!")
 
 def excluir():
     cls()
     if len(amigos)==0:
-        print("Você não tem amigos :P")
-        print(" ")
+        print("Você não tem amigos :P\n")
         return
-    else:
-        print("Seus amigos próximos:")
-        for i in range(len(amigos)):
-            print(i+1,"-",amigos[i])
-        print(" ")
-        opcao=input("Digite o nome do amigo para excluir: ")
-        if opcao in amigos:
-            amigos.remove(opcao)
-            print("Sucesso!")
-        else:
-            print("Erro! Amigo não encontrado!")
+
+    print("Seus amigos próximos:")
+    for i in range(len(amigos)):
+        print(i+1,"-",amigos[i])
+    print()
+
+    opcao=input("Digite o nome do amigo para excluir: ")
+    if not opcao in amigos:
+        print("Erro! Amigo não encontrado!")
+        return
+    amigos.remove(opcao)
+    print("Sucesso!")
 
 def listar():
     cls()
     print("Seus amigos próximos: " if len(amigos)!=0 else "Você não tem amigos :P")
     for i in range(len(amigos)):
         print(i+1,"-",amigos[i])
-    print(" ")
+    print()
 
 while True:
     cls()

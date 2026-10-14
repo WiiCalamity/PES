@@ -28,36 +28,55 @@ class Pessoa:
 ###############################################################
 
 listaDePessoas=[]
-listaDePessoas.append(Pessoa("John Python",37,1.7,80)) # Para testar
+listaDePessoas.append(Pessoa("John Python",37,1.7,80))
+
+def nomeEhValido(nomeDigitado):
+        for pessoa in listaDePessoas:
+                if pessoa.nome == nomeDigitado:
+                        return True
 
 def cadastrar():
-        nome=input("Nome (str): ")
-        idade=input("Idade (int): ")
-        altura=input("Altura (float): ")
-        peso=input("Peso (float): ")
+        nome=input("Nome (str): ") 
+        idade=int(input("Idade (int): "))
+        altura=float(input("Altura (float): "))
+        peso=float(input("Peso (float): "))
+        print("Cadastrado.")
         listaDePessoas.append(Pessoa(nome,idade,altura,peso))
 
 def listar():
         for pessoa in listaDePessoas:
-                print(pessoa)
+                print(pessoa.__str__())
 
 def atualizar():
         nomeDigitado=input("Nome da pessoa a atualizar: ")
-        for pessoa in listaDePessoas:
-                if pessoa.nome == nomeDigitado:
-                        break
-        else:
+        if not nomeEhValido(nomeDigitado):
+                print("Nome não encontrado...")
                 return
-        # Fazer aqui
+        nome=input("Novo nome: ")
+        idade=input("Nova idade: ")
+        altura=input("Nova altura: ")
+        peso=input("Novo peso: ")
 
         for indice in range(len(listaDePessoas)):
-                if listaDePessoas[indice].nome == nomeDigitado:
-                        nome=input("Novo nome: ")
-                        idade=input("Nova idade: ")
-                        altura=input("Nova altura: ")
-                        peso=input("Novo peso: ")
-                        listaDePessoas[indice]=Pessoa(nome,idade,altura,peso)
-                        break
+                if listaDePessoas[indice].nome != nomeDigitado:
+                        continue
+                listaDePessoas[indice]=Pessoa(nome,idade,altura,peso)
+                break
+
+def excluir():
+        nomeDigitado=input("Nome da pessoa a EXCLUIR: ")
+        if not nomeEhValido(nomeDigitado):
+                print("Nome não encontrado...")
+                return
+        
+        for indice in range(len(listaDePessoas)):
+                if listaDePessoas[indice].nome != nomeDigitado:
+                        continue
+                print("Removido.")
+                listaDePessoas.pop(indice)
+                break
+        
+
 
 
 while True:
