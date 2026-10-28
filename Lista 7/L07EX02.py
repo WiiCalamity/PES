@@ -34,7 +34,7 @@ tipo = input("Tipo do computador (desktop/notebook): ")
 fabricante = input("Fabricante da CPU: ")
 modelo = input("Modelo da CPU: ")
 
-print("\nEsse é o seu computador --")
+print("\n-- Esse é o seu computador --")
 meuPc = Computador(tipo, fabricante, modelo)
 print(meuPc)
 

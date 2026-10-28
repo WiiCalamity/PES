@@ -45,7 +45,7 @@ class Livro:
                         return False
                 self.paginaMarcada = Marcador(paginaAMarcar)
                 # Por que atualizar o marcador se posso trocar por um novo
-                # tendo o mesmo resultado?
+                # e ter o mesmo resultado?
 
 
 print("Criando um livro...")
