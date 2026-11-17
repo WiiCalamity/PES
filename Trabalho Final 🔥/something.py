@@ -28,8 +28,6 @@ class Usuario:
                 self.senha = senha
                 self.cargo = cargo
                 self.servicoRealizado = servicoRealizado
-        def __repr__(self):
-                return f"Meu nome é {self.nome} e eu sou um usuário genérico"
 
 
 class Servico:
@@ -47,8 +45,15 @@ class Horario:
                 self.nomeDoCliente = nomeDoCliente
                 self.nomeDoProfissional = nomeDoProfissional
 
-# Um Horario tem 1..n serviços
-# Um servico tem 0..n horarios
+# Para fazer:
+# [x] Sistema de login
+# [ ] Cadastro de horário
+# [ ] Edição da agenda
+# [ ] Registro de serviços
+# [ ] Consulta de clientes
+# [ ] Relatório de lucros
+# [ ] Relatório de demandas
+# [ ] Pickle
 
 listaServico = []
 listaServico.append("Corte de cabelo", 20, [listaUsuario[1].nome])
