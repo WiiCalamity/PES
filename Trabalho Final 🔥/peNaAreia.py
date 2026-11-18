@@ -21,16 +21,19 @@ import getpass
 import os
 def clear():
         os.system('cls' if os.name=='nt' else 'clear')
-
-# Para fazer:
-# [x] Sistema de login
-# [ ] Cadastro de horário
-# [ ] Edição da agenda
-# [x] Registro de serviços
-# [ ] Consulta de clientes
-# [ ] Relatório de lucros
-# [ ] Relatório de demandas
-# [ ] Pickle
+"""
+Para fazer:
+[x] Sistema de login
+[x] Cadastro de horário
+[ ] Edição da agenda
+[x] Registro de serviços
+[ ] Consulta de clientes
+[ ] Relatório de lucros
+[ ] Relatório de demandas
+[ ] Ver agenda (profissional)
+[ ] Pickle
+Onde parei: corrigi a agenda que não estava mostrando os horários indisponíveis
+"""
 
 ###################################
 #  ____ _                         #
@@ -47,9 +50,48 @@ class Cliente:
                 self.email = email
                 self.telefone = telefone
                 self.senha = senha
-        
+                self.horariosMarcados = []
+
+        def __repr__(self):
+                return f"{self.cpf}: \"{self.nome}\" {self.email} {self.telefone}"
+
+
         def agendarHorario(self):
-                pass
+                mes = input("Digite o mês (e.g. 12): ")
+                if int(mes) > 12:
+                        print("NÃO")
+                        return
+                dia = input("Digite o dia (e.g. 1): ")
+                if int(dia) > 31:
+                        print("NÃO")
+                        return
+
+                printarAgenda(mes, dia)
+                hora = horarioDeFuncionamento[int(input("Selecione a hora: "))]
+
+                printarServicos()
+                servicoEscolhido = listaDeServicos[int(input("Selecione o serviço: "))]
+                print("Você escolheu: ",servicoEscolhido.nome)
+
+                for profissional in listaDeProfissionais:
+                        if servicoEscolhido in profissional.servicos:
+                                profissionalEscolhido = profissional
+                                break
+
+                listaDeHorariosMarcados.append(
+                        HorarioMarcado(mes,dia,hora,servicoEscolhido,self,profissionalEscolhido)
+                        )
+
+
+        def verMeusHorarios(self):
+                print(f"Você tem {len(self.horariosMarcados)} horário(s).")
+                for i in range(len(self.horariosMarcados)):
+                        print(f"[{i+1}] Dia {self.horariosMarcados[i].dia} " +
+                              f"do mês {self.horariosMarcados[i].mes}: " +
+                              f"R$ {self.horariosMarcados[i].valorTotal} " +
+                              f"{self.horariosMarcados[i].servico.nome}"
+                              # Que pesadelo ^^
+                        )
         
         def obterNomeDaClasse(self):
                 return type(self).__name__
@@ -62,6 +104,7 @@ class Profissional(Cliente):
                 self.email = email
                 self.telefone = telefone
                 self.senha = senha
+                self.horariosMarcados = []
                 self.servicos = servicos
         
         def __repr__(self):
@@ -90,15 +133,15 @@ class Servico:
                 return f" * Nome: {self.nome}\n" + \
                 f" * Preço: {self.valor}\n" + \
                 f" * Profissionais: {self.profissionaisResponsaveis}\n"
-        
+
         def obterNome(self):
                 return self.nome
-        
+
         def adicionarProfissional(self, profissional):
                 self.profissionaisResponsaveis.append(profissional)
 
 
-class Horario:
+class HorarioMarcado:
         def __init__(self,mes,dia,hora,servico,cliente,profissional):
                 self.mes = mes
                 self.dia = dia
@@ -108,6 +151,23 @@ class Horario:
                 self.cliente = cliente
                 self.profissional = profissional
 
+        def __repr__(self):
+                return f"{self.dia}/{self.mes}:{self.hora}-{self.profissional}"
+
+
+#############################################################################
+#__     __         _   __            _       ___       _      _       _     #
+#\ \   / /_ _ _ __(_) /_/___   _____(_)___  |_ _|_ __ (_) ___(_) __ _(_)___ #
+# \ \ / / _` | '__| |/ _` \ \ / / _ \ / __|  | || '_ \| |/ __| |/ _` | / __|#
+#  \ V / (_| | |  | | (_| |\ V /  __/ \__ \  | || | | | | (__| | (_| | \__ \#
+#   \_/ \__,_|_|  |_|\__,_| \_/ \___|_|___/ |___|_| |_|_|\___|_|\__,_|_|___/#
+#############################################################################
+
+horarioDeFuncionamento = [
+        "08:00", "08:30", "09:00", "09:30", "10:00", "10:30",
+        "11:00", "11:30", "13:30", "14:00", "14:30", "15:00",
+        "15:30", "16:00", "16:30", "17:00", "17:30", "18:00",
+]
 
 listaDeClientes = [
         Cliente("123.456","John Cliente","john@email","123","john")
@@ -122,44 +182,42 @@ listaDeProfissionais = [
 ]
 contaDoAdmin = Administrador("admin","Admin","admin@penaareia","0","admin")
 
-# 0: Corte      | 0: Jane
-# 1: Manicure   | 1: Fulano
+# Monstruosidade
 listaDeServicos[0].adicionarProfissional(listaDeProfissionais[0])
 listaDeServicos[1].adicionarProfissional(listaDeProfissionais[0])
 listaDeServicos[1].adicionarProfissional(listaDeProfissionais[1])
 listaDeProfissionais[0].adicionarServico(listaDeServicos[0])
+listaDeProfissionais[1].adicionarServico(listaDeServicos[1])
 
-horarioDeFuncionamento = [
-        "09:00", "09:30", "08:00", "08:30", "10:00", "10:30",
-        "11:00", "11:30", "13:30", "14:00", "14:30", "15:00",
-        "15:30", "16:00", "16:30", "17:00", "17:30", "18:00",
+listaDeHorariosMarcados = [
+        HorarioMarcado("12","1","11:00",listaDeServicos[0],listaDeClientes[0],listaDeProfissionais[0])
 ]
+listaDeClientes[0].horariosMarcados.append(listaDeHorariosMarcados[0])
+listaDeProfissionais[0].horariosMarcados.append(listaDeHorariosMarcados[0])
 
-listaDeHorarios = [
-        Horario("01","12","11:00",listaDeServicos[0],listaDeClientes[0],listaDeProfissionais[0])
-]
 
-############################
-# _                _       #
-#| |    ___   __ _(_)_ __  #
-#| |   / _ \ / _` | | '_ \ #
-#| |__| (_) | (_| | | | | |#
-#|_____\___/ \__, |_|_| |_|#
-#            |___/         #
-############################
+########################################
+# _____                 /\/|           #
+#|  ___|   _ _ __   ___|/\/   ___  ___ #
+#| |_ | | | | '_ \ / __/ _ \ / _ \/ __|#
+#|  _|| |_| | | | | (_| (_) |  __/\__ \#
+#|_|   \__,_|_| |_|\___\___/ \___||___/#
+#                   )_)                #
+########################################
+
+def prosseguir():
+        input("\n<Enter> para continuar...")
 
 def fazerLogin():
+        global login
         cpf = input("CPF: ")
         senha = getpass.getpass(prompt="Senha: ")
         for usuario in listaDeClientes+listaDeProfissionais+[contaDoAdmin]:
                 if usuario.cpf == cpf and usuario.senha == senha:
-                        break
-        else:
-                print("CPF ou senha incorretos.")
-                return
-        global login
-        login = usuario
-        print(f"Bem vindo(a), {login.nome}")
+                        login = usuario
+                        return True
+        print("CPF ou senha incorretos.")
+
 
 def cadastrar():
         cpf = input("CPF: ")
@@ -174,62 +232,36 @@ def cadastrar():
         listaDeClientes.append(Cliente(cpf,nome,email,telefone,senha))
         print("Cadastrado! Agora faça login.")
 
-login = listaDeClientes[0]
-#login = None
-def loginLoop():
-        while login == None:
-                clear()
-                print("  ===================  ")
-                print("||       Login       ||")
-                print("||                   ||")
-                print("||-------------------||")
-                print("||                   ||")
-                print("|| [1] Fazer login   ||")
-                print("|| [2] Cadastrar     ||")
-                print("||                   ||")
-                print("  ===================  ")
-                key = input("Opção: ")
-                match key:
-                        case "1":
-                                fazerLogin()
-                        case "2":
-                                cadastrar()
-                input("<Enter>")
-loginLoop()
 
-
-###########################################
-# ____       _            _             _ #
-#|  _ \ _ __(_)_ __   ___(_)_ __   __ _| |#
-#| |_) | '__| | '_ \ / __| | '_ \ / _` | |#
-#|  __/| |  | | | | | (__| | |_) | (_| | |#
-#|_|   |_|  |_|_| |_|\___|_| .__/ \__,_|_|#
-#                          |_|            #
-###########################################
-"""
-dia 1 de setembro
-
-[0]  09:30 | [x]  13:30
-[1]  10:00 | [x]  14:00
-[x]  10:30 | [x]  14:30
-[x]  11:00 | [9]  15:00
-[5]  11:30 | [10] 15:30
-Digite o numero (x significa indisponivel):
-"""
-
-def agendarHorario():
-        mes = input("Digite o mês (e.g. 11): ")
-        dia = input("Digite o dia: ")
-        horariosDoDia = [
-                h for h in listaDeHorarios if h.mes == mes and h.dia == dia
-        ]
+def printarAgenda(mes, dia):
         for i in range(len(horarioDeFuncionamento)):
-                print(f"| [{i}] {horarioDeFuncionamento[i]} |",end="")
-                if i % 3 == 0: print()
+                marca = i
+                for horario in listaDeHorariosMarcados:
+                        if horario.hora == horarioDeFuncionamento[i] \
+                        and horario.mes == mes and horario.dia == dia:
+                                marca = "X"
+                                break
+                print(f"[ {marca} ] {horarioDeFuncionamento[i]}")
 
 
-# Um profissional tem 1..n serviços
-# Um serviço tem 0..n profissionais
+# def printarAgendaDoProfissional(mes, dia):
+#         for i in range(len(horarioDeFuncionamento)):
+#                 for horario in listaDeHorariosMarcados:
+#                         if horario.hora == horarioDeFuncionamento[i] \
+#                         and horario.mes == mes and horario.dia == dia:
+#                                 print("AAAAAAAAAAAAAAAAAAAAAAAAAA\nAWDIANIK")
+#                                 marca = "X"
+#                                 break
+#                 print(f"[ {i} ] {horarioDeFuncionamento[i]}")
+
+
+def printarServicos():
+        i = 0
+        for servico in listaDeServicos:
+                print(f"[{i}] {servico.nome}")
+                i += 1
+
+
 def cadastrarServico():
         nome = input("Nome: ")
         valor = input("Valor: ")
@@ -245,6 +277,7 @@ def cadastrarServico():
         for i in indiceDosProfissionais:
                 listaDeProfissionais[int(i)].adicionarServico(listaDeServicos[-1])
                 listaDeServicos[-1].adicionarProfissional(listaDeProfissionais[int(i)])
+
 
 def cadastrarProfissional():
         cpf = input("CPF: ")
@@ -265,7 +298,7 @@ def cadastrarProfissional():
         indiceDosServicos = input("Digite o(s) serviço(s) realizado(s) (e.g. 134): ")
         for i in indiceDosServicos:
                 servicos.append(listaDeServicos[int(i)])
-        
+
         listaDeProfissionais.append(
                 Profissional(cpf,nome,email,telefone,senha,servicos)
         )
@@ -273,62 +306,142 @@ def cadastrarProfissional():
                 listaDeServicos[int(i)].adicionarProfissional(listaDeProfissionais[-1])
         print("Cadastrado.")
 
+
 def editarServico():
+        # Incompleto
         for i in range(len(listaDeServicos)):
                 print(f"[{i}] {listaDeServicos[i]}")
         s = input("Serviço: ")
 
-while login.obterNomeDaClasse() == "Administrador":
-        clear()
-        print("  =============================  ")
-        print("||      Você é                           ||")
-        print("||   administrador!                      ||")
-        print("||-------------------                    ||")
-        print("||                                       ||")
-        print("|| [1] Confirmar horários                ||")
-        print("|| [2] Ver clientes                      ||")
-        print("||                                       ||")
-        print("|| [3] Relatório de demandas             ||")
-        print("|| [4] Relatório de lucros               ||")
-        print("||                                       ||")
-        print("|| [5] Cadastrar profissional            ||")
-        print("|| [6] Cadastrar serviço                 ||")
-        print("||                                       ||")
-        print("|| [7] Atrelar profissional a um serviço ||")
-        print("|| [8] Atrelar serviço a um profissional ||")
-        print("||                                       ||")
-        print("|| [7] Ver serviços                      ||")
-        print("|| [8] Editar serviço                    ||")
-        print("||                                       ||")
-        print("|| [0] Sair                              ||")
-        print("||                                       ||")
-        print("  =============================  ")
-        key = input("Opção: ")
-        match key:
-                case "5":
-                        cadastrarProfissional()
-                case "6":
-                        cadastrarServico()
-                case "7":
-                        for i in range(len(listaDeServicos)):
-                                print(f"Serviço {i+1}: ")
-                                print(listaDeServicos[i])
-                case "0":
-                        login=None
-        input("<Enter>")
 
-while login.obterNomeDaClasse() == "Cliente":
-        print(f"   Olá, {login.nome}.      ")
-        print(f"  =======================  ")
-        print(f"||                       ||")
-        print(f"|| [1] Agendar horário   ||")
-        print(f"|| [2] Ver seus horários ||")
-        print(f"|| [0] Sair              ||")
-        print(f"||                       ||")
-        print(f"  =======================  ")
-        key = input("Opção: ")
-        match key:
-                case "1":
-                        agendarHorario()
+###########################################
+# ____       _            _             _ #
+#|  _ \ _ __(_)_ __   ___(_)_ __   __ _| |#
+#| |_) | '__| | '_ \ / __| | '_ \ / _` | |#
+#|  __/| |  | | | | | (__| | |_) | (_| | |#
+#|_|   |_|  |_|_| |_|\___|_| .__/ \__,_|_|#
+#                          |_|            #
+###########################################
 
-loginLoop()
+login = listaDeClientes[0]
+#login = None
+while True:
+        while not login:
+                clear()
+                print("  ===================  ")
+                print("||       Login       ||")
+                print("||                   ||")
+                print("||-------------------||")
+                print("||                   ||")
+                print("|| [1] Fazer login   ||")
+                print("|| [2] Cadastrar     ||")
+                print("||                   ||")
+                print("  ===================  ")
+                key = input("Opção: ")
+                match key:
+                        case "1":
+                                if fazerLogin():
+                                        break
+                        case "2":
+                                cadastrar()
+                prosseguir()
+
+        while login.obterNomeDaClasse() == "Administrador":
+                clear()
+                print("  =======================================  ")
+                print("||         Você é administrador!         ||")
+                print("||                                       ||")
+                print("||---------------------------------------||")
+                print("||                                       ||")
+                print("|| [1] Ver clientes                      ||")
+                print("|| [2] Ver serviços                      ||")
+                print("|| [3] Editar serviço                    ||")
+                print("||                                       ||")
+                print("|| [4] Cadastrar profissional            ||")
+                print("|| [5] Cadastrar serviço                 ||")
+                print("||                                       ||")
+                print("|| [6] Atrelar profissional a um serviço ||")
+                print("|| [7] Atrelar serviço a um profissional ||")
+                print("||                                       ||")
+                print("|| [8] Relatório de demandas             ||")
+                print("|| [9] Relatório de lucros               ||")
+                print("||                                       ||")
+                print("|| [0] Sair                              ||")
+                print("||                                       ||")
+                print("  =======================================  ")
+                key = input("Opção: ")
+                match key:
+                        case "1":
+                                [print(c) for c in listaDeClientes]
+                        case "2":
+                                printarServicos()
+                        case "4":
+                                cadastrarProfissional()
+                        case "5":
+                                cadastrarServico()
+                        case "0":
+                                break
+                prosseguir()
+
+        while login.obterNomeDaClasse() == "Profissional":
+                clear()
+                print(f"Olá, {login.nome}.         ")
+                print(f"  =======================  ")
+                print(f"||                       ||")
+                print(f"|| [1] Ver agenda        ||")
+                print(f"|| [2] Ver meus horários ||")
+                print(f"||                       ||")
+                print(f"|| [3] Listar serviços   ||")
+                print(f"||                       ||")
+                print(f"|| [0] Sair              ||")
+                print(f"||                       ||")
+                print(f"  =======================  ")
+                key = input("Opção: ")
+                match key:
+                        case "1":
+                                mes = int(input("Digite o mês (e.g. 12): "))
+                                if mes > 12:
+                                        print("NÃO")
+                                        continue
+                                dia = int(input("Digite o dia (e.g. 1): "))
+                                if dia > 31:
+                                        print("NÃO")
+                                        continue
+
+                                printarAgenda(mes, dia)
+                        case "2":
+                                login.verMeusHorarios()
+                        case "3":
+                                printarServicos()
+                        case "0":
+                                break
+                prosseguir()
+
+        while login.obterNomeDaClasse() == "Cliente":
+                clear()
+                print(f"Olá, {login.nome}.         ")
+                print(f"  =======================  ")
+                print(f"||                       ||")
+                print(f"|| [1] Agendar horário   ||")
+                print(f"|| [2] Ver meus horários ||")
+                print(f"||                       ||")
+                print(f"|| [3] Listar serviços   ||")
+                print(f"||                       ||")
+                print(f"|| [0] Sair              ||")
+                print(f"||                       ||")
+                print(f"  =======================  ")
+                print(listaDeHorariosMarcados)
+                printarAgenda("12","1")
+                key = input("Opção: ")
+                match key:
+                        case "1":
+                                login.agendarHorario()
+                        case "2":
+                                login.verMeusHorarios()
+                        case "3":
+                                printarServicos()
+                        case "0":
+                                break
+                prosseguir()
+        login = None
+
