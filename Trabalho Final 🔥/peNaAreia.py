@@ -32,7 +32,8 @@ Para fazer:
 [ ] Relatório de demandas
 [x] Ver agenda (profissional)
 [ ] Pickle
-Onde parei: Relatório
+Onde parei: Relatório. Preciso de algum jeito de somar o valor de todos os
+serviços naquele horário relevante. Send help
 """
 
 ###################################
@@ -45,6 +46,7 @@ Onde parei: Relatório
 
 class Cliente:
         def __init__(self,cpf,nome,email,telefone,senha):
+                self.id = gerarId(listaDeClientes)
                 self.cpf = cpf
                 self.nome = nome
                 self.email = email
@@ -52,16 +54,19 @@ class Cliente:
                 self.senha = senha
                 self.horariosAgendados = []
 
+
         def __repr__(self):
                 return f"{self.cpf}: \"{self.nome}\" {self.email} {self.telefone}"
+
 
         def obterNomeDaClasse(self):
                 return type(self).__name__
 
+
         def printarAgenda(self, mes, dia):
                 for i in range(len(horarioDeFuncionamento)):
-                        marca = i
                         for horario in listaDeHorariosAgendados:
+                                marca = i
                                 if horario.hora == horarioDeFuncionamento[i] \
                                 and horario.mes == mes and horario.dia == dia:
                                         marca = "X"
@@ -90,8 +95,11 @@ class Cliente:
                         if servicoEscolhido in profissional.servicos:
                                 profissionalEscolhido = profissional
                                 break
+                id = len(listaDeHorariosAgendados)
                 listaDeHorariosAgendados.append(
-                        HorarioAgendado(mes,dia,hora,servicoEscolhido,self,profissionalEscolhido)
+                        HorarioAgendado(
+                                id,mes,dia,hora,servicoEscolhido,self,profissionalEscolhido
+                                )
                         )
                 self.horariosAgendados.append(listaDeHorariosAgendados[-1])
 
@@ -125,6 +133,7 @@ class Cliente:
 
 class Profissional(Cliente):
         def __init__(self,cpf,nome,email,telefone,senha,servicos):
+                self.id = gerarId(listaDeProfissionais)
                 self.cpf = cpf
                 self.nome = nome
                 self.email = email
@@ -144,8 +153,7 @@ class Profissional(Cliente):
                         for horario in listaDeHorariosAgendados:
                                 if horario.hora == horarioDeFuncionamento[i] \
                                 and horario.mes == mes and horario.dia == dia:
-                                        apendice = f"{horario.profissional} -> " + \
-                                        f"{horario.cliente.nome}"
+                                        apendice = f"({horario.profissional})"
                                         break
                         print(f"[ {i} ] {horarioDeFuncionamento[i]} ({apendice})")
 
@@ -157,68 +165,60 @@ class Profissional(Cliente):
                                 listaDeServicos[i].profissionaisResponsaveis.append(self)
 
 """
-RELATÓRIO DO MÊS 12
-Dia 1:
- * TOTAL: R$ 120, x horários
- * Corte: R$ 20; 1 horário(s)
- * Manicure: R$ 75; 3 horário(s)
+RELATÓRIO DO MÊS 12, DIA 1 até 7
 
-Dia 2:
- * ...
- * ...
+Horários agendados: 20
+Lucro total: R$ 217.0
+
+Corte de cabelo: 2 horário(s) -- R$ 40.0
+Manicure: 3 horário(s) -- R$ 40.0
+...: 4 horário(s) -- R$ 40.0
+
+
 """
-
 class Administrador(Profissional):
-        def __init__(self,cpf,nome,email,telefone,senha):
+        def __init__(self,cpf,senha):
                 self.cpf = cpf
-                self.nome = nome
-                self.email = email
-                self.telefone = telefone
                 self.senha = senha
 
+
         def gerarRelatorio(self,mes,diaDeInicio,diaDeFim):
+                print(f"\nRELATÓRIO DO MÊS {mes}, DIA {diaDeInicio} até {diaDeFim}")
                 lucroTotal = 0
                 demandasTotal = 0
+                listaDeHorariosRelevantes = []
                 for horario in listaDeHorariosAgendados:
                         if horario.mes == mes and diaDeInicio <= int(horario.dia) <= diaDeFim:
+                                listaDeHorariosRelevantes.append(horario)
                                 lucroTotal += float(horario.valorTotal)
-                                demandasTotal += 1
-                print(f"RELATÓRIO DO MÊS {mes}, DIA {diaDeInicio}-{diaDeFim}")
-                for i in range(diaDeInicio,diaDeFim):
-                        print(f"Dia {i}:\n * TOTAL: R$ {lucroTotal}; {demandasTotal} horário(s)")
-                        for j in range(listaDeServicos):
-
-
-
+                                horariosAgendados += 1
+                print(f"\nHorários agendados: {horariosAgendados}" + \
+                        f"\nLucro total: R$ {lucroTotal}")
+                for horario in listaDeHorariosRelevantes:
+                        demandas = listaDeHorariosRelevantes.count(horario.servico.nome)
 
 
         def printarClientesCompleto(self):
-                for i in range(len(listaDeClientes)):
-                        print(f"[{i}] {listaDeClientes[i]}")
+                for cliente in listaDeClientes:
+                        print(f"[{cliente.id}] {cliente}")
 
 
         def printarClientesCurto(self):
-                i = 0
                 for cliente in listaDeClientes:
-                        print(f"[{i}] {cliente.nome} ({cliente.cpf})")
-                        i += 1
+                        print(f"[{cliente.id}] {cliente.nome} ({cliente.cpf})")
 
 
         def printarProfissionaisCurto(self):
-                i = 0
                 for profissional in listaDeProfissionais:
-                        print(f"[{i}] {profissional.nome} ({profissional.cpf})")
-                        i += 1
+                        print(f"[{profissional.id}] {profissional.nome} ({profissional.cpf})")
 
 
         def printarHorariosAgendados(self):
-                i = 0
                 for horario in listaDeHorariosAgendados:
-                        print(f"[{i}] {horario.dia}/{horario.mes} {horario.hora} -- " + \
-                                f"{horario.cliente.nome} "
+                        print(f"[{horario.id}] {horario.dia}/{horario.mes} {horario.hora} -- " + \
+                                f"{horario.cliente.nome} " + \
                                 f"({horario.servico.nome} com {horario.profissional.nome})"
                         )
-                        i += 1
 
 
         def editarServico(self):
@@ -238,17 +238,15 @@ class Administrador(Profissional):
         def cadastrarServico(self):
                 nome = input("Nome: ")
                 valor = input("Valor: ")
-                i = 0
                 listaDeServicos.append(Servico(nome,valor,[]))
 
                 for profissional in listaDeProfissionais:
-                        print(f"[{i}] {profissional.nome} ({profissional.cpf})")
-                        i += 1
-                indiceDosProfissionais = input(
+                        print(f"[{profissional.id}] {profissional.nome} ({profissional.cpf})")
+                idDosProfissionais = input(
                         "(em branco para nao atrelar)\n"
                         "Digite o(s) profissional(s) que realiza(m) o serviço (e.g. 134): ")
-                for i in indiceDosProfissionais:
-                        listaDeServicos[-1].adicionarProfissional(listaDeProfissionais[int(i)])
+                for id in idDosProfissionais:
+                        listaDeServicos[-1].adicionarProfissional(listaDeProfissionais[int(id)])
 
 
         def cadastrarProfissional(self):
@@ -322,14 +320,15 @@ class Administrador(Profissional):
 
 
 class Servico:
-        def __init__(self,nome,valor,profissionaisResponsaveis: list):
+        def __init__(self,nome,valor,profissionaisResponsaveis):
+                self.id = gerarId(listaDeServicos)
                 self.nome = nome
                 self.valor = valor
                 self.profissionaisResponsaveis = profissionaisResponsaveis
 
 
         def __repr__(self):
-                return f"{self.nome}\n" + \
+                return f"[{self.id}] {self.nome}\n" + \
                 f" * Preço: {self.valor}\n" + \
                 f" * Profissionais: {self.profissionaisResponsaveis}\n"
 
@@ -344,6 +343,7 @@ class Servico:
 
 class HorarioAgendado:
         def __init__(self,mes,dia,hora,servico,cliente,profissional):
+                self.id = gerarId(listaDeHorariosAgendados)
                 self.mes = mes
                 self.dia = dia
                 self.hora = hora
@@ -391,7 +391,7 @@ listaDeProfissionais = [
         Profissional("222.222","Kauan","kauan@email","333","kauan",[]),
         Profissional("333.333","Faz-tudo da Silva","faztudo@email","333","faztudo",[])
 ]
-contaDoAdmin = Administrador("admin","Admin","admin@penaareia","0","admin")
+contaDoAdmin = Administrador("admin","admin")
 
 listaDeProfissionais[0].adicionarServico(listaDeServicos[0])
 listaDeProfissionais[0].adicionarServico(listaDeServicos[3])
@@ -451,6 +451,9 @@ listaDeProfissionais[0].horariosAgendados.append(listaDeHorariosAgendados[0])
 def prosseguir():
         input("\n<Enter> para continuar...")
 
+def gerarId(lista):
+        return len(lista)
+
 def fazerLogin():
         global login
         cpf = input("CPF: ")
@@ -472,7 +475,7 @@ def cadastrar():
         email = input("Email: ")
         telefone = input("Número de telefone: ")
         senha = getpass.getpass(prompt="Senha: ")
-        listaDeClientes.append(Cliente(cpf,nome,email,telefone,senha))
+        listaDeClientes.append(Cliente(nome,email,telefone,senha))
         print("Cadastrado! Agora faça login.")
 
 
@@ -510,29 +513,28 @@ while True:
                                 cadastrar()
                 prosseguir()
 
-        while login.obterNomeDaClasse() == "Administrador":
+        while login = contaDoAdmin:
                 clear()
-                print("  =======================================  ")
-                print("||         Você é administrador!         ||")
-                print("||                                       ||")
-                print("||---------------------------------------||")
-                print("||                                       ||")
-                print("|| [1] Ver clientes                      ||")
-                print("|| [2] Ver serviços                      ||")
-                print("|| [3] Ver agenda                        ||")
-                print("||                                       ||")
-                print("|| [4] Editar serviço                    ||")
-                print("|| [5] Editar horario                    ||")
-                print("||                                       ||")
-                print("|| [6] Cadastrar profissional            ||")
-                print("|| [7] Cadastrar serviço                 ||")
-                print("||                                       ||")
-                print("|| [8] Relatório de demandas             ||")
-                print("|| [9] Relatório de lucros               ||")
-                print("||                                       ||")
-                print("|| [0] Sair                              ||")
-                print("||                                       ||")
-                print("  =======================================  ")
+                print("  ============================  ")
+                print("||    Você é administrador!   ||")
+                print("||                            ||")
+                print("||----------------------------||")
+                print("||                            ||")
+                print("|| [1] Ver clientes           ||")
+                print("|| [2] Ver serviços           ||")
+                print("|| [3] Ver agenda             ||")
+                print("||                            ||")
+                print("|| [4] Editar serviço         ||")
+                print("|| [5] Editar horario         ||")
+                print("||                            ||")
+                print("|| [6] Cadastrar profissional ||")
+                print("|| [7] Cadastrar serviço      ||")
+                print("||                            ||")
+                print("|| [8] Gerar relatório        ||")
+                print("||                            ||")
+                print("|| [0] Sair                   ||")
+                print("||                            ||")
+                print("  ============================  ")
                 key = input("Opção: ")
                 match key:
                         case "1":
@@ -550,7 +552,7 @@ while True:
                         case "7":
                                 contaDoAdmin.cadastrarServico()
                         case "8":
-                                contaDoAdmin.gerarRelatorio(input("12"),input("1"),input("7"))
+                                contaDoAdmin.gerarRelatorio("12",1,7)
                         case "0":
                                 break
                 prosseguir()
