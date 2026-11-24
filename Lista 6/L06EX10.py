@@ -1,3 +1,4 @@
+#!/bin/python3
 """
 10 – Utilizando a biblioteca pickle, implemente duas novas opções para salvar e carregar
 dados do disco, utilizando como base, o exercício 8.
@@ -55,7 +56,9 @@ def cadastrarObjeto(lista):
         idade = int(input("Idade: "))
         if lista == listaDeProfessores:
                 especializacao = input("Especialização: ")
-                listaDeProfessores.append(Professor(matricula,nome,sobrenome,idade,especializacao))
+                listaDeProfessores.append(
+                        Professor(matricula,nome,sobrenome,idade,especializacao)
+                )
                 return
         listaDeEstudantes.append(Estudante(matricula,nome,sobrenome,idade))
 
