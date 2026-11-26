@@ -22,18 +22,19 @@ import os
 def clear():
         os.system('cls' if os.name=='nt' else 'clear')
 """
-Para fazer:
-[x] Sistema de login
-[x] Cadastro de horário
-[x] Edição da agenda
-[x] Registro de serviços
-[x] Consulta de clientes
-[x] Relatório de lucros   } UFA
-[x] Relatório de demandas }
-[x] Ver agenda (profissional)
-[x] Pickle :]
-Onde parei: quase pronto! hlnjkhliukhjkfdhgikfdsjhgkjf
+Roteiro:
+Criar uma conta
+ver servicos
+Marcar um horário
+Logar como profissional
+Ver meu horario
+logar como admin
+editar meu horario
+gerar relatorio
+ver mais coisas
+POR FAVOR ARRUMA O AGENDARHORARIO QIE ESTÁ ATRELANDO A HORA ERRADO
 """
+
 
 ###################################
 #  ____ _                         #
@@ -87,38 +88,30 @@ class Cliente:
 
 
         def agendarHorario(self):
-                mes = input("Digite o mês (e.g. 12): ")
-                if int(mes) > 12: print("NÃO"); return
-                dia = input("Digite o dia (e.g. 1): ")
-                if int(dia) > 31: print("NÃO"); return
-                # mes = "12"
-                # dia = "1"
+                mesSelecionado = input("Digite o mês (e.g. 12): ")
+                if int(mesSelecionado) <= 0 or int(mesSelecionado) > 12: print("NÃO"); return
+                diaSelecionado = input("Digite o dia (e.g. 1): ")
+                if int(diaSelecionado) <= 0 or int(diaSelecionado) > 31: print("NÃO"); return
 
                 self.printarServicosCurto()
                 servicoEscolhido = listaDeServicos[int(input("Selecione o serviço: "))]
-                print("Você escolheu:",servicoEscolhido.nome)
-                # servicoEscolhido = listaDeServicos[0]
 
-                k = self.printarAgenda(mes, dia, servicoEscolhido)
-                hora = horarioDeFuncionamento[int(input("Selecione a hora: "))+k]
+                self.printarAgenda(mesSelecionado, diaSelecionado, servicoEscolhido)
+                horaSelecionada = horarioDeFuncionamento[int(input("Selecione a hora: "))]
 
-                # O profissional não deve estar ocupado no mesmo horário:
-                # O mês pode ser o mesmo e o dia pode ser o mesmo, mas
-                # nesse caso a hora deve ser diferente.
-                # Também há o caso do mês ser diferente e/ou o dia também,
-                # nesse caso o horário pode ser igual
-
+                menorQuantiaDeHorariosAgendados = float("inf")
                 for profissional in listaDeProfissionais:
-                        for horario in profissional.horariosAgendados:
-                                if servicoEscolhido in profissional.servicos \
-                                and ((horario.hora != hora and horario.dia == dia)
-                                or (horario.hora == hora and horario.dia != dia)):
-                                        profissionalEscolhido = profissional
-                                        break
+                        if not servicoEscolhido in profissional.servicos:
+                                continue
+                        if len(profissional.horariosAgendados) < menorQuantiaDeHorariosAgendados:
+                                # Escolher o profissional menos ocupado
+                                profissionalEscolhido = profissional
+                                menorQuantiaDeHorariosAgendados=len(profissional.horariosAgendados)
 
                 listaDeHorariosAgendados.append(
                         HorarioAgendado(
-                                mes,dia,hora,servicoEscolhido,self,profissionalEscolhido
+                               mesSelecionado,diaSelecionado,horaSelecionada,
+                                servicoEscolhido,self,profissionalEscolhido
                         )
                 )
                 self.horariosAgendados.append(listaDeHorariosAgendados[-1])
@@ -172,12 +165,17 @@ class Cliente:
 
 
         def printarServicosCurto(self):
+                i = 0
                 for servico in listaDeServicos:
-                        print(f"[{servico.id}] {servico.nome}")
+                        print(f"[{i}] {servico.nome}")
+                        i += 1
 
 
         def printarServicosCompleto(self):
-                [print(servico) for servico in listaDeServicos]
+                i = 0
+                for servico in listaDeServicos:
+                        print(f"[{i}] {servico}")
+                        i += 1
 
 
 
@@ -226,26 +224,34 @@ class Administrador(Profissional):
 
 
         def printarClientesCompleto(self):
+                i = 0
                 for cliente in listaDeClientes:
-                        print(f"[{cliente.id}] {cliente}")
+                        print(f"[{i}] {cliente}")
+                        i += 1
 
 
         def printarClientesCurto(self):
+                i = 0
                 for cliente in listaDeClientes:
-                        print(f"[{cliente.id}] {cliente.nome} ({cliente.cpf})")
+                        print(f"[{i}] {cliente.nome} ({cliente.cpf})")
+                        i += 1
 
 
         def printarProfissionaisCurto(self):
+                i = 0
                 for profissional in listaDeProfissionais:
-                        print(f"[{profissional.id}] {profissional.nome} ({profissional.cpf})")
+                        print(f"[{i}] {profissional.nome} ({profissional.cpf})")
+                        i += 1
 
 
         def printarHorariosAgendados(self):
+                i = 0
                 for horario in listaDeHorariosAgendados:
-                        print(f"[{horario.id}] {horario.dia}/{horario.mes} {horario.hora} -- " +\
-                                f"{horario.cliente.nome} " + \
-                                f"({horario.servico.nome} com {horario.profissional.nome})"
+                        print(f"[{i}] {horario.dia}/{horario.mes} {horario.hora} -- " +\
+                        f"{horario.cliente.nome} " + \
+                        f"({horario.servico.nome} com {horario.profissional.nome})"
                         )
+                        i += 1
 
 
         def importarPickle(self):
@@ -416,7 +422,7 @@ class Servico:
 
 
         def __repr__(self):
-                return f"[{self.id}] {self.nome}\n" + \
+                return f"{self.nome}\n" + \
                 f" * Preço: {self.valor}\n" + \
                 f" * Profissionais: {self.profissionaisResponsaveis}\n"
 
@@ -432,7 +438,7 @@ class Servico:
 class HorarioAgendado:
         contagemDeInstancias = 0
         def __init__(self,mes,dia,hora,servico,cliente,profissional):
-                self.id = Servico.contagemDeInstancias
+                self.id = HorarioAgendado.contagemDeInstancias
                 self.mes = mes
                 self.dia = dia
                 self.hora = hora
@@ -440,6 +446,7 @@ class HorarioAgendado:
                 self.valorTotal = servico.valor
                 self.cliente = cliente
                 self.profissional = profissional
+                HorarioAgendado.contagemDeInstancias += 1
 
 
         def __repr__(self):
@@ -476,9 +483,9 @@ listaDeServicos = [
         Servico("Cílios",30.0,[])
 ]
 listaDeProfissionais = [
-        Profissional("000.000","Jane Cortes","jane@email","111","jane",[]),
-        Profissional("111.111","Fulano Mãos","Fulano@email","222","fulano",[]),
-        Profissional("222.222","Kauan","kauan@email","333","kauan",[]),
+        Profissional("000.000","Jane Cortes","jane@email","000","jane",[]),
+        Profissional("111.111","Fulano Mãos","Fulano@email","111","fulano",[]),
+        Profissional("222.222","Kauan","kauan@email","222","kauan",[]),
         Profissional("333.333","Faz-tudo da Silva","faztudo@email","333","faztudo",[])
 ]
 contaDoAdmin = Administrador("admin","admin")
@@ -508,10 +515,10 @@ listaDeHorariosAgendados = [
         "12","1","11:00",listaDeServicos[0],listaDeClientes[1],listaDeProfissionais[0]
         ),
         HorarioAgendado(
-        "12","1","11:30",listaDeServicos[1],listaDeClientes[2],listaDeProfissionais[3]
+        "12","1","11:30",listaDeServicos[1],listaDeClientes[2],listaDeProfissionais[1]
         ),
         HorarioAgendado(
-        "12","1","17:30",listaDeServicos[2],listaDeClientes[1],listaDeProfissionais[0]
+        "12","1","17:30",listaDeServicos[2],listaDeClientes[1],listaDeProfissionais[2]
         ),
         HorarioAgendado(
         "12","2","14:00",listaDeServicos[2],listaDeClientes[4],listaDeProfissionais[3]
@@ -528,7 +535,7 @@ listaDeClientes[1].horariosAgendados.append(listaDeHorariosAgendados[1])
 listaDeProfissionais[0].horariosAgendados.append(listaDeHorariosAgendados[1])
 
 listaDeClientes[2].horariosAgendados.append(listaDeHorariosAgendados[2])
-listaDeProfissionais[3].horariosAgendados.append(listaDeHorariosAgendados[2])
+listaDeProfissionais[0].horariosAgendados.append(listaDeHorariosAgendados[2])
 
 listaDeClientes[1].horariosAgendados.append(listaDeHorariosAgendados[3])
 listaDeProfissionais[0].horariosAgendados.append(listaDeHorariosAgendados[3])
@@ -578,7 +585,7 @@ def cadastrar():
         email = input("Email: ")
         telefone = input("Número de telefone: ")
         senha = getpass.getpass(prompt="Senha: ")
-        listaDeClientes.append(Cliente(nome,email,telefone,senha))
+        listaDeClientes.append(Cliente(cpf,nome,email,telefone,senha))
         print("Cadastrado! Agora faça login.")
 
 
@@ -627,17 +634,18 @@ while True:
                 print("|| [1]  Ver clientes 👥           ||")
                 print("|| [2]  Ver serviços 💇           ||")
                 print("|| [3]  Ver agenda 📒             ||")
+                print("|| [4]  Ver horários ⏰           ||")
                 print("||                                ||")
-                print("|| [4]  Editar serviço 💇         ||")
-                print("|| [5]  Editar horario ⏰         ||")
+                print("|| [5]  Editar serviço 💇         ||")
+                print("|| [6]  Editar horario ⏰         ||")
                 print("||                                ||")
-                print("|| [6]  Cadastrar profissional 👥 ||")
-                print("|| [7]  Cadastrar serviço 💇      ||")
+                print("|| [7]  Cadastrar profissional 👥 ||")
+                print("|| [8]  Cadastrar serviço 💇      ||")
                 print("||                                ||")
-                print("|| [8]  Gerar relatório 📝        ||")
+                print("|| [9]  Gerar relatório 📝        ||")
                 print("||                                ||")
-                print("|| [9]  Importar Pickle 🥒        ||")
-                print("|| [10] Exportar Pickle 🥒        ||")
+                print("|| [10]  Importar Pickle 🥒        ||")
+                print("|| [11] Exportar Pickle 🥒        ||")
                 print("||                                ||")
                 print("|| [0]  Sair ◀️                    ||")
                 print("||                                ||")
@@ -651,22 +659,24 @@ while True:
                         case "3":
                                 contaDoAdmin.printarAgenda(input("Mês: "),input("Dia: "))
                         case "4":
-                                contaDoAdmin.editarServico()
+                                contaDoAdmin.printarHorariosAgendados()
                         case "5":
-                                contaDoAdmin.editarHorario()
+                                contaDoAdmin.editarServico()
                         case "6":
-                                contaDoAdmin.cadastrarProfissional()
+                                contaDoAdmin.editarHorario()
                         case "7":
-                                contaDoAdmin.cadastrarServico()
+                                contaDoAdmin.cadastrarProfissional()
                         case "8":
+                                contaDoAdmin.cadastrarServico()
+                        case "9":
                                 contaDoAdmin.gerarRelatorio(
                                         input("Mês: "),
                                         int(input("Dia inicial: ")),
                                         int(input("Dia final: "))
                                 )
-                        case "9":
-                                contaDoAdmin.importarPickle()
                         case "10":
+                                contaDoAdmin.importarPickle()
+                        case "11":
                                 contaDoAdmin.exportarPickle()
                         case "0":
                                 break
